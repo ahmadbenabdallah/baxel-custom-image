@@ -1,0 +1,26 @@
+version: 2
+updates:
+  # Keep the Alpine base image current — Dependabot opens a PR when a newer
+  # tag is available. Note: this does NOT catch security patches pushed to
+  # the SAME tag (e.g. alpine:3.21 rebuilt upstream) — that's why the
+  # Dockerfile also pins by digest below, and why the CI workflow re-scans
+  # the built image with Trivy on every push regardless of tag changes.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # Keep the CI workflow's own actions (checkout, build-push-action, etc.)
+  # patched — supply-chain risk here is just as real as in the image itself.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"

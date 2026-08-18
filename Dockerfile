@@ -1,14 +1,24 @@
 # Hermes Agent — custom Blaxel sandbox image
 # Dependency set validated by hand on a bare Alpine 3.21 container before
 # baking into this template (see notes below for why each package is here).
+#
+# SECURITY NOTE: both base images below are pinned by digest, not just tag.
+# A tag like `alpine:3.21` or `sandbox:latest` can be silently repointed at
+# a different (or compromised) image by the upstream maintainer or registry
+# without your Dockerfile changing at all — Dependabot's Docker updates
+# won't catch that since nothing about the tag changed. Pinning by digest
+# means this build only ever uses the exact bytes verified in CI.
+# Update these digests deliberately (e.g. via `docker pull <image> && docker
+# inspect --format='{{index .RepoDigests 0}}' <image>`) rather than letting
+# them drift silently.
 
-FROM alpine:3.21
+FROM alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
 
 # --- Blaxel sandbox API (REQUIRED) ------------------------------------------
 # Every Blaxel sandbox image must include this binary — it's what gives you
 # process management, file operations, and the /process HTTP API that the
 # entrypoint below calls into. Without it the sandbox never becomes usable.
-COPY --from=ghcr.io/blaxel-ai/sandbox:latest /sandbox-api /usr/local/bin/sandbox-api
+COPY --from=ghcr.io/blaxel-ai/sandbox:latest@sha256:9ba865445c947e9a2f575aabd6beb77f8391281a5d21aa54a40225c461f85144 /sandbox-api /usr/local/bin/sandbox-api
 
 # --- System packages ---------------------------------------------------------
 # nodejs/npm    : Alpine's musl-native build. Hermes's installer bundles its

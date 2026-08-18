@@ -1,0 +1,13 @@
+# Hermes runtime data / secrets — NEVER commit these
+.hermes/
+**/.hermes/.env
+**/.hermes/config.yaml
+*.env
+.env*
+
+# Local Docker/build artifacts
+*.log
+.DS_Store
+
+# Blaxel local config, if ever generated in-repo
+.blaxel/

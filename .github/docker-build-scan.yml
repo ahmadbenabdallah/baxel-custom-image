@@ -1,0 +1,62 @@
+name: Build, Lint & Scan Docker Image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Re-scan weekly even with no code changes — catches newly disclosed
+    # CVEs in packages already baked into the image (Dependabot won't
+    # surface these on its own, since nothing in the Dockerfile changed).
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  hadolint:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          # Fail the build on anything error-level or worse; adjust as needed
+          failure-threshold: error
+
+  build-and-scan:
+    name: Build & Scan Image
+    runs-on: ubuntu-latest
+    needs: hadolint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (not pushed — local scan only)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: hermes-agent-sandbox:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          image-ref: hermes-agent-sandbox:ci
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1" # fail the workflow if CRITICAL/HIGH vulns are found
+          ignore-unfixed: true # don't fail on vulns with no available fix yet
+
+      - name: Scan filesystem / repo for leaked secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
