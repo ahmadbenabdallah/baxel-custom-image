@@ -21,9 +21,14 @@ echo "Sandbox API ready"
 #     -H "Content-Type: application/json" \
 #     -d '{
 #       "workingDir": "/usr/local/lib/hermes-agent",
-#       "command": "python run_agent.py",
+#       "command": "./venv/bin/python run_agent.py",
 #       "waitForCompletion": false
 #     }'
+#
+# NOTE: use ./venv/bin/python, not system python — Hermes's deps (pyyaml,
+# etc.) live in its own uv-managed virtualenv, not on the system Python path.
+# Alternatively, use the "hermes" launcher the installer already put on
+# PATH at /usr/local/bin/hermes, which handles venv activation for you.
 #
 # If you DO want Hermes to boot automatically with the sandbox instead,
 # uncomment the block below:
@@ -31,7 +36,7 @@ echo "Sandbox API ready"
 # echo "Starting Hermes Agent..."
 # curl http://127.0.0.1:8080/process -X POST \
 #   -H "Content-Type: application/json" \
-#   -d '{"workingDir": "/usr/local/lib/hermes-agent", "command": "python run_agent.py", "waitForCompletion": false}'
+#   -d '{"workingDir": "/usr/local/lib/hermes-agent", "command": "./venv/bin/python run_agent.py", "waitForCompletion": false}'
 
 # Keep the container running
 wait

@@ -63,8 +63,10 @@ RUN curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 WORKDIR /usr/local/lib/hermes-agent
 RUN npm install
 
-# Sanity check the full stack (Python + Node) resolves before shipping
-RUN python run_agent.py --help
+# Sanity check the full stack (Python + Node) resolves before shipping.
+# Must use the venv's own Python — Hermes installs its deps (pyyaml, etc.)
+# into /usr/local/lib/hermes-agent/venv via uv, not into system python.
+RUN ./venv/bin/python run_agent.py --help
 
 # --- Entrypoint ---------------------------------------------------------------
 WORKDIR /root
