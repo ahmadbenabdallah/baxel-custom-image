@@ -12,7 +12,7 @@
 # inspect --format='{{index .RepoDigests 0}}' <image>`) rather than letting
 # them drift silently.
 
-FROM alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 
 # --- Blaxel sandbox API (REQUIRED) ------------------------------------------
 # Every Blaxel sandbox image must include this binary — it's what gives you
