@@ -12,7 +12,14 @@
 # inspect --format='{{index .RepoDigests 0}}' <image>`) rather than letting
 # them drift silently.
 
-FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
+FROM alpine:3.21@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+
+# Alpine's default shell is ash (busybox), not bash. Set pipefail explicitly
+# so any RUN using a pipe (e.g. curl | bash below) fails the build if the
+# LEFT side of the pipe fails, not just the right side — without this, a
+# broken/truncated curl download could silently report success because bash
+# still exits 0 on empty input.
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 # --- Blaxel sandbox API (REQUIRED) ------------------------------------------
 # Every Blaxel sandbox image must include this binary — it's what gives you
@@ -40,6 +47,11 @@ COPY --from=ghcr.io/blaxel-ai/sandbox:latest@sha256:9ba865445c947e9a2f575aabd6be
 #                 without these — cheap to include upfront.
 # openssh-client : installer tries SSH clone before falling back to HTTPS.
 # bash, curl    : installer requires bash; curl fetches the install script.
+# hadolint ignore=DL3018
+# Version-pinning apk packages is intentionally skipped here: Alpine package
+# versions shift with every base-image bump, and hard-pinning would make
+# this Dockerfile break on every Dependabot-triggered Alpine update instead
+# of just picking up the new compatible versions automatically.
 RUN apk add --no-cache \
     bash \
     curl \
@@ -59,10 +71,12 @@ RUN apk add --no-cache \
     openssh-client \
     netcat-openbsd
 
+# hadolint ignore=DL3059
 # Fail the build fast if any of the above didn't land correctly
 RUN node -v && npm -v && python3 -V && git --version
 
 # --- Hermes Agent install ----------------------------------------------------
+# hadolint ignore=DL3059
 RUN curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 # Explicitly re-run the Node.js dependency install from the correct directory.
@@ -76,6 +90,7 @@ RUN npm install
 # Sanity check the full stack (Python + Node) resolves before shipping.
 # Must use the venv's own Python — Hermes installs its deps (pyyaml, etc.)
 # into /usr/local/lib/hermes-agent/venv via uv, not into system python.
+# hadolint ignore=DL3059
 RUN ./venv/bin/python run_agent.py --help
 
 # --- Entrypoint ---------------------------------------------------------------
