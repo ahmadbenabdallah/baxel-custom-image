@@ -1,7 +1,7 @@
 # Hermes Agent — Blaxel Sandbox Image
 
 <p>
-  <img src="https://img.shields.io/badge/Alpine-3.21-0D597F?style=for-the-badge&logo=alpinelinux&logoColor=white" alt="Alpine Linux 3.21" />
+  <img src="https://img.shields.io/badge/Alpine-3.21-0D597F?style=for-the-badge&logo=alpinelinux&logoColor=white" alt="Alpine Linux 3.24" />
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
   <img src="https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 22" />
   <img src="https://img.shields.io/badge/Python-3.11%20%2F%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11 / 3.12" />
@@ -9,14 +9,13 @@
 </p>
 
 <p>
-  <img src="https://img.shields.io/github/actions/workflow/status/OWNER/REPO/docker-build-scan.yml?branch=main&style=flat-square&label=build" alt="Build status" />
+  <img src="https://img.shields.io/github/actions/workflow/status/ahmadbenabdallah/baxel-custom-image/docker-build-scan.yml?branch=main&style=flat-square&label=build" alt="Build status" />
   <img src="https://img.shields.io/badge/dependabot-enabled-025E8C?style=flat-square&logo=dependabot&logoColor=white" alt="Dependabot enabled" />
   <img src="https://img.shields.io/badge/scanned%20with-Trivy-1904DA?style=flat-square&logo=aquasecurity&logoColor=white" alt="Scanned with Trivy" />
   <img src="https://img.shields.io/badge/lint-hadolint-blue?style=flat-square" alt="Hadolint" />
   <img src="https://img.shields.io/github/license/OWNER/REPO?style=flat-square" alt="License" />
 </p>
 
-> Replace `OWNER/REPO` in the badge URLs above with your actual GitHub path once pushed, or the build/license badges will show as "unknown."
 
 A production-ready [Blaxel](https://www.blaxel.ai) sandbox image that ships [Hermes Agent](https://hermes-agent.nousresearch.com) (Nous Research) pre-installed on Alpine Linux, with the full native-module toolchain it needs to build cleanly on first boot — no dependency surprises at runtime.
 
